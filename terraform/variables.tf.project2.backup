@@ -1,0 +1,63 @@
+# AWS Region
+variable "aws_region" {
+  description = "AWS region for resources"
+  type        = string
+  default     = "us-east-1"
+}
+
+# Instance Type
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t2.micro"
+}
+
+# Key Pair Name
+variable "key_name" {
+  description = "SSH key pair name"
+  type        = string
+  default     = "todo-api-key"
+}
+
+# Public Key (from your existing SSH key)
+variable "public_key" {
+  description = "SSH public key content"
+  type        = string
+}
+
+# GitHub Username
+variable "github_username" {
+  description = "GitHub username for repository clone"
+  type        = string
+  default     = "Sir-TheWILL"
+}
+
+# Blue-Green Deployment Variables
+variable "active_environment" {
+  description = "Which environment should receive traffic (blue or green)"
+  type        = string
+  default     = "blue"
+  
+  validation {
+    condition     = var.active_environment == "blue" || var.active_environment == "green"
+    error_message = "active_environment must be either 'blue' or 'green'."
+  }
+}
+
+variable "blue_instance_id" {
+  description = "EC2 instance ID for blue environment"
+  type        = string
+  default     = ""
+}
+
+variable "green_instance_id" {
+  description = "EC2 instance ID for green environment"
+  type        = string
+  default     = ""
+}
+
+variable "certificate_arn" {
+  description = "ARN of SSL certificate for ALB"
+  type        = string
+  default     = ""
+}

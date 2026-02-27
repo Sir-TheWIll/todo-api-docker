@@ -4,7 +4,7 @@ output "instance_id" {
 }
 
 output "public_ip" {
-  description = "EC2 Public IP Address"
+  description = "EC2 Public IP"
   value       = aws_instance.todo_server.public_ip
 }
 
@@ -13,12 +13,12 @@ output "public_dns" {
   value       = aws_instance.todo_server.public_dns
 }
 
-output "sslip_url" {
-  description = "SSLIP.io URL for HTTPS access"
-  value       = "https://${aws_instance.todo_server.public_ip}.sslip.io"
+output "ssh_command" {
+  description = "SSH command"
+  value       = "ssh -i ~/.ssh/todo-api-key ubuntu@${aws_instance.todo_server.public_ip}"
 }
 
-output "ssh_command" {
-  description = "SSH command to connect to instance"
-  value       = "ssh -i ~/.ssh/todo-api-key ubuntu@${aws_instance.todo_server.public_ip}"
+output "sslip_url" {
+  description = "SSLIP URL"
+  value       = "https://${aws_instance.todo_server.public_ip}.sslip.io"
 }

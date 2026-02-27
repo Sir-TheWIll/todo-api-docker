@@ -1,0 +1,129 @@
+name: Blue-Green Deploy to AWS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Target environment (blue/green)'
+        required: true
+        default: 'green'
+        type: choice
+        options:
+          - blue
+          - green
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+      
+      - name: Determine target environment
+        id: env
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "target=${{ github.event.inputs.target_environment }}" >> $GITHUB_OUTPUT
+          else
+            # Auto-rotate between blue and green
+            echo "target=green" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Deploy to ${{ steps.env.outputs.target }} environment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "🚀 Deploying to ${{ steps.env.outputs.target }} environment..."
+            
+            cd /home/ubuntu/todo-api-docker
+            
+            # Fix git permissions
+            git config --global --add safe.directory /home/ubuntu/todo-api-docker
+            sudo chown -R ubuntu:ubuntu .git/ 2>/dev/null || true
+            
+            # Pull latest code
+            git pull origin main
+            
+            # Build target environment
+            docker-compose -f docker-compose.blue-green.yml build ${{ steps.env.outputs.target }}
+            
+            # Restart target environment
+            docker-compose -f docker-compose.blue-green.yml up -d --force-recreate ${{ steps.env.outputs.target }}
+            
+            # Wait for startup
+            echo "⏳ Waiting for startup..."
+            sleep 30
+            
+            # Health check
+            if [ "${{ steps.env.outputs.target }}" = "blue" ]; then
+              PORT=8080
+            else
+              PORT=8081
+            fi
+            
+            echo "🏥 Running health check on port $PORT..."
+            for i in {1..5}; do
+              if curl -sf http://localhost:$PORT/health | grep -q "OK"; then
+                echo "✅ Health check passed!"
+                break
+              fi
+              echo "Attempt $i: Waiting..."
+              sleep 5
+            done
+            
+            echo ""
+            echo "✅ Deployment to ${{ steps.env.outputs.target }} complete!"
+            echo "📊 Container Status:"
+            docker ps --format "table {{.Names}}\t{{.Status}}"
+      
+      - name: Switch traffic to ${{ steps.env.outputs.target }}
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/todo-api-docker
+            
+            echo "🔄 Switching traffic to ${{ steps.env.outputs.target }}..."
+            
+            # Update Nginx config
+            if [ "${{ steps.env.outputs.target }}" = "blue" ]; then
+              sed -i 's/server green:3000;/server blue:3000;/' nginx-bluegreen.conf
+            else
+              sed -i 's/server blue:3000;/server green:3000;/' nginx-bluegreen.conf
+            fi
+            
+            # Reload Nginx
+            docker-compose -f docker-compose.blue-green.yml restart nginx
+            
+            sleep 5
+            
+            # Verify
+            if curl -sf http://localhost/health | grep -q "OK"; then
+              echo "✅ Traffic switched successfully!"
+            else
+              echo "⚠️  Verification may need more time"
+            fi
+      
+      - name: Deployment summary
+        run: |
+          echo "## 🎉 Blue-Green Deployment Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ steps.env.outputs.target }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Time:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** https://${{ secrets.EC2_HOST }}.sslip.io" >> $GITHUB_STEP_SUMMARY

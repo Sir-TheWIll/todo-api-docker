@@ -6,3 +6,17 @@ nginx/ssl/*.key
 nginx/ssl/*.crt
 frontend/node_modules/
 frontend/dist/
+*.tfstate
+*.tfstate.*
+.terraform/
+ansible/.retry
+
+# GitHub Actions
+.github/workflows/*.local.yml
+
+# Secrets
+.secrets/
+*.secret
+*.pem
+*.key
+!nginx/ssl/.gitkeep

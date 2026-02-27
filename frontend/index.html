@@ -3,35 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>✨ TodoFlow - Complete CRUD Task Manager</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✅</text></svg>">
+  <title>Todo API - Project 2</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22></text></svg>">
   <style>
     /* ===== CSS VARIABLES FOR THEMES ===== */
     :root {
-      --primary: #6366f1;
-      --primary-hover: #4f46e5;
-      --secondary: #ec4899;
-      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --text-primary: #1f2937;
-      --text-secondary: #6b7280;
-      --border-color: #e5e7eb;
+      /* Light Mode - White/Black Theme */
+      --primary: #000000;
+      --primary-hover: #333333;
+      --secondary: #666666;
+      --bg-gradient: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+      --card-bg: rgba(255, 255, 255, 0.98);
+      --text-primary: #000000;
+      --text-secondary: #666666;
+      --border-color: #e0e0e0;
       --shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
       --shadow-hover: 0 20px 50px -10px rgba(0, 0, 0, 0.15);
-      --success: #10b981;
-      --danger: #ef4444;
-      --warning: #f59e0b;
+      --success: #000000;
+      --danger: #d32f2f;
+      --warning: #f57c00;
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     [data-theme="dark"] {
-      --bg-gradient: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-      --card-bg: rgba(30, 27, 75, 0.95);
-      --text-primary: #f9fafb;
-      --text-secondary: #9ca3af;
-      --border-color: #374151;
-      --shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
-      --shadow-hover: 0 20px 50px -10px rgba(0, 0, 0, 0.4);
+      /* Dark Mode - Black/White Theme */
+      --bg-gradient: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+      --card-bg: rgba(20, 20, 20, 0.98);
+      --text-primary: #ffffff;
+      --text-secondary: #b0b0b0;
+      --border-color: #333333;
+      --shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+      --shadow-hover: 0 20px 50px -10px rgba(0, 0, 0, 0.6);
+      --success: #ffffff;
+      --danger: #ef5350;
+      --warning: #ffa726;
     }
 
     /* ===== BASE STYLES ===== */
@@ -60,27 +65,37 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 2rem;
-      padding: 1rem;
+      padding: 1.5rem;
       background: var(--card-bg);
       border-radius: 16px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+    }
+
+    .logo-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
     }
 
     .logo {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 1.5rem;
+      font-size: 1.75rem;
       font-weight: 700;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--text-primary);
+    }
+
+    .subheading {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      font-weight: 400;
     }
 
     .theme-toggle {
-      background: none;
+      background: var(--card-bg);
       border: 2px solid var(--border-color);
       border-radius: 50%;
       width: 44px;
@@ -107,6 +122,7 @@
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
       transition: var(--transition);
+      border: 1px solid var(--border-color);
     }
 
     .card:hover {
@@ -135,7 +151,11 @@
     .todo-form input:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] .todo-form input:focus {
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
     }
 
     .todo-form input::placeholder {
@@ -145,7 +165,7 @@
     .btn {
       padding: 0.875rem 1.5rem;
       background: var(--primary);
-      color: white;
+      color: var(--card-bg);
       border: none;
       border-radius: 12px;
       font-weight: 600;
@@ -159,7 +179,7 @@
     .btn:hover {
       background: var(--primary-hover);
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px -5px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.3);
     }
 
     .btn:active {
@@ -176,24 +196,22 @@
       background: var(--danger);
     }
     .btn-danger:hover {
-      background: #dc2626;
-      box-shadow: 0 8px 25px -5px rgba(239, 68, 68, 0.4);
+      background: #c62828;
+      box-shadow: 0 8px 25px -5px rgba(211, 47, 47, 0.4);
     }
 
     .btn-success {
       background: var(--success);
     }
     .btn-success:hover {
-      background: #059669;
-      box-shadow: 0 8px 25px -5px rgba(16, 185, 129, 0.4);
+      background: var(--primary-hover);
     }
 
     .btn-warning {
       background: var(--warning);
     }
     .btn-warning:hover {
-      background: #d97706;
-      box-shadow: 0 8px 25px -5px rgba(245, 158, 11, 0.4);
+      background: #ef6c00;
     }
 
     .btn-secondary {
@@ -207,9 +225,13 @@
     .progress-section {
       margin-bottom: 1.5rem;
       padding: 1rem;
-      background: rgba(99, 102, 241, 0.1);
+      background: rgba(0, 0, 0, 0.05);
       border-radius: 12px;
       border: 1px solid var(--border-color);
+    }
+
+    [data-theme="dark"] .progress-section {
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .progress-header {
@@ -229,7 +251,7 @@
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      background: var(--primary);
       border-radius: 4px;
       transition: width 0.5s ease;
       width: 0%;
@@ -276,7 +298,7 @@
     /* Edit Mode */
     .todo-item.editing {
       border-color: var(--warning);
-      background: rgba(245, 158, 11, 0.1);
+      background: rgba(245, 124, 0, 0.1);
     }
 
     .todo-item.editing .todo-title {
@@ -333,8 +355,8 @@
     }
 
     .checkbox input:checked ~ .checkmark {
-      background: var(--success);
-      border-color: var(--success);
+      background: var(--primary);
+      border-color: var(--primary);
     }
 
     .checkmark:after {
@@ -400,15 +422,15 @@
       color: white;
     }
     .btn-edit:hover {
-      background: #d97706;
+      background: #ef6c00;
     }
 
     .btn-save {
       background: var(--success);
-      color: white;
+      color: var(--card-bg);
     }
     .btn-save:hover {
-      background: #059669;
+      background: var(--primary-hover);
     }
 
     .btn-cancel {
@@ -454,6 +476,7 @@
       animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
       border-left: 4px solid var(--primary);
       max-width: 350px;
+      border: 1px solid var(--border-color);
     }
 
     .toast.success { border-left-color: var(--success); }
@@ -506,6 +529,7 @@
     @media (max-width: 600px) {
       .container { padding: 1rem; }
       .header { flex-direction: column; gap: 1rem; text-align: center; }
+      .logo-section { align-items: center; }
       .todo-form { flex-direction: column; }
       .todo-item { flex-wrap: wrap; }
       .todo-actions { width: 100%; justify-content: flex-end; margin-top: 0.5rem; }
@@ -542,10 +566,14 @@
 
     .stat-card {
       padding: 1rem;
-      background: rgba(99, 102, 241, 0.1);
+      background: rgba(0, 0, 0, 0.05);
       border-radius: 12px;
       text-align: center;
       border: 1px solid var(--border-color);
+    }
+
+    [data-theme="dark"] .stat-card {
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .stat-value {
@@ -571,7 +599,10 @@
   <div class="container">
     <!-- Header -->
     <header class="header">
-      <div class="logo">✨ TodoFlow</div>
+      <div class="logo-section">
+        <div class="logo">✅ Todo API</div>
+        <div class="subheading">Project 2 of the CloudOps Cohort I</div>
+      </div>
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
     </header>
 
@@ -814,12 +845,11 @@
       }
     }
     
-    // ===== EDIT FUNCTIONS (NEW!) =====
+    // ===== EDIT FUNCTIONS =====
     function startEdit(id) {
       editingId = id
       renderTodos()
       
-      // Focus on the edit input
       const editInput = document.querySelector(`[data-id="${id}"] .edit-input`)
       if (editInput) {
         editInput.focus()
@@ -889,7 +919,7 @@
     
     // ===== UPDATE & DELETE FUNCTIONS =====
     async function toggleTodo(id, completed) {
-      if (editingId) return // Don't toggle while editing
+      if (editingId) return
       
       try {
         const response = await fetch(`${API_URL}/${id}`, {
@@ -988,11 +1018,10 @@
       `
       toastContainer.appendChild(toast)
       
-      // Remove after animation
       setTimeout(() => toast.remove(), 3000)
     }
     
-    // Make functions globally available for inline handlers
+    // Make functions globally available
     window.toggleTodo = toggleTodo
     window.deleteTodo = deleteTodo
     window.startEdit = startEdit

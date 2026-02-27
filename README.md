@@ -361,7 +361,9 @@ Test Coverage
 
 ## 📋 Section 12: Screenshots
 
-```markdown
+```
+
+markdown
 ## 📸 Screenshots
 
 ### Light Mode
@@ -381,6 +383,7 @@ Test Coverage
 
 ### Docker Containers
 ![Docker](screenshots/docker-ps.png)
+
 
 📋 Section 13: Project Requirements
 ## ✅ Project 2 Requirements Checklist

@@ -31,65 +31,50 @@ jobs:
             echo "Author: ${{ github.actor }}"
             echo ""
             
-            # Navigate to app directory
             cd /home/ubuntu/todo-api-docker
+            
+            # Fix git ownership issue
+            git config --global --add safe.directory /home/ubuntu/todo-api-docker
             
             # Pull latest code
             echo "📦 Pulling latest code..."
             git pull origin main
             
-            # Stop old containers
-            echo "🛑 Stopping containers..."
+            # Stop all containers
+            echo "🛑 Stopping all containers..."
             docker-compose down
             
-            # Remove old images
-            echo "🧹 Cleaning up old images..."
-            docker image prune -f
+            # Remove old containers and images
+            echo "🧹 Cleaning up..."
+            docker rm -f todo-frontend todo-nginx todo-api todo-mongo 2>/dev/null || true
+            docker rmi todo-api-docker_frontend todo-api-docker_nginx 2>/dev/null || true
             
-            # Build new images locally on EC2
-            echo "🔨 Building new images..."
+            # Build with NO cache
+            echo "🔨 Building with --no-cache..."
             docker-compose build --no-cache
             
-            # Start new containers
+            # Start containers
             echo "🚀 Starting containers..."
             docker-compose up -d
             
             # Wait for services
-            echo "⏳ Waiting for services to start..."
-            sleep 15
+            echo "⏳ Waiting for services..."
+            sleep 20
             
             # Health check
-            echo "🏥 Running health check..."
-            for i in {1..5}; do
-              if curl -s http://localhost:3000/health | grep -q "OK"; then
-                echo "✅ Health check passed!"
-                break
-              fi
-              echo "Attempt $i: Waiting for service..."
-              sleep 5
-            done
+            echo "🏥 Health check..."
+            if curl -s http://localhost:3000/health | grep -q "OK"; then
+              echo "✅ Health check passed!"
+            else
+              echo "⚠️  Health check failed..."
+              docker logs todo-api --tail 20
+            fi
             
-            # Show container status
             echo ""
             echo "📊 Container Status:"
             docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
             
-            # Show logs
-            echo ""
-            echo "📋 Recent API Logs:"
-            docker logs todo-api --tail 10
-            
             echo ""
             echo "✅ Deployment Complete!"
-            echo "🌐 Application URL: https://${{ secrets.EC2_HOST }}.sslip.io"
-      
-      - name: Deployment Summary
-        run: |
-          echo "## 🎉 Deployment Successful!" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Author:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Time:** $(date)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Application URL:** https://${{ secrets.EC2_HOST }}.sslip.io" >> $GITHUB_STEP_SUMMARY
+            echo "🌐 URL: https://${{ secrets.EC2_HOST }}.sslip.io"
+            echo "💡 Hard refresh: Cmd+Shift+R or Ctrl+Shift+R"

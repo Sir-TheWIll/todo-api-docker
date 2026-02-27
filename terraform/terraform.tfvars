@@ -1,0 +1,5 @@
+public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCewwie29N5hQ758WX+jnG1oFVEp9t5YxzLADbqQmSIBSyaX5UbRnjjnYYIxsy0X6rKb71KiEW9y4n9Bq88qB15cRpvZbYWnwMkvOsRN6W3McKjT62himWnQJVhzzTLKd51bMZaMFAQuSyyReUh1gWFiXyk5NmVX4PyxtM5DnFBF/sWndgv8ptRG7kar/wpdJB3GpDhzzzLDUbPP8qkoED+Xc7tENk7j+H4uYYfYVuMv8q8uzzX431k8l0jBBO9fzXl0hQrcpjvQ+16+obcTQdcHEqVakD/HM3bjujUBM0SwqEwnJud9J3d/WKudkzTb1IH5CFrwNkUUg8vpLmCgF+SEcukf2Er3xP5Ej4japYn7DVbLCXbu3rE/hWvPrFF0Zjqc8UzLudPH7ClfQB/zr2+7/n3f+TN1/e0FyNJqbjxDZt2zi6kOdQwkORzAOBlOuRfl5RCJmJBDMygMcErlTri7/uFxmVSMAfm/4+st35Rn4CCVJdwzEdGXN+LC7H0UPBxr5b2w/+uhtdV9MZAQay6TVDi2cWDhH0Yn8stBREeTV4MEvOns+8V2E/GaT/CSiRdpsCk4/li8muPqiS4Ezt6OvesWqvXN02jz+CsIRuR59YOyFwgW+r5Nj8Cu284En3DKeSR7cStPc/IEmtEU4YlIpVkUn02+bH3ASsWrDOueQ== todo-api"
+aws_region = "us-east-1"
+instance_type = "t2.micro"
+key_name = "todo-api-key"
+github_username = "Sir-TheWILL"

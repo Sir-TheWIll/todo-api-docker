@@ -414,6 +414,83 @@ The next project will implement a **Blue-Green Deployment** strategy for zero-do
 - 📊 Monitoring and health checks
 - 🎯 Zero downtime during deployments
 
+
+## 🎯 Project 3: Blue-Green Deployment
+
+### Overview
+
+Implemented a **Blue-Green Deployment** strategy for zero-downtime, production-grade deployments.
+
+### Architecture
+┌─────────────────────────────────────────────────────────────┐
+│ Single EC2 Instance │
+├─────────────────────────────────────────────────────────────┤
+│ ┌────────────────────────────────────────────────┐ │
+│ │ Nginx (Traffic Router) │ │
+│ │ Routes to Active Environment │ │
+│ └───────────────────┬────────────────────────────┘ │
+│ │ │
+│ ┌────────────┴────────────┐ │
+│ ▼ ▼ │
+│ ┌─────────────┐ ┌─────────────┐ │
+│ │ BLUE │ │ GREEN │ │
+│ │ Container │ │ Container │ │
+│ │ Port 8080 │ │ Port 8081 │ │
+│ └─────────────┘ └─────────────┘ │
+│ │
+│ ┌─────────────────────────────────────────────┐ │
+│ │ MongoDB (Shared) │ │
+│ └─────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+
+### Benefits
+
+| Feature | Benefit |
+|---------|---------|
+| **Zero Downtime** | Users never experience service interruption |
+| **Instant Rollback** | Switch back in seconds if issues arise |
+| **Safe Deployments** | Test new version before switching traffic |
+| **Reduced Risk** | Isolated environments for each deployment |
+
+### How It Works
+
+1. **Deploy** new version to inactive environment (e.g., GREEN)
+2. **Test** the new version thoroughly
+3. **Switch** traffic via Nginx configuration update
+4. **Monitor** for any issues
+5. **Rollback** instantly if needed by switching back
+
+### Usage
+
+```bash
+# Deploy to Green environment
+./scripts/deploy-blue-green.sh --target green
+
+# Switch traffic to Green
+./scripts/switch-blue-green.sh --to green
+
+# Rollback to Blue
+./scripts/switch-blue-green.sh --to blue
+```
+## CI/CD Pipeline
+
+**Trigger:** Push to main branch
+**Process:** Auto-deploys to inactive environment, runs health checks, switches traffic
+**Result:** Zero-downtime automated deployments
+
+## Project 3 Requirements Checklist
+
+**Requirement**                               **Status**
+
+Two isolated environments                ✅ Blue & Green containers
+Traffic switching mechanism              ✅ Nginx configuration
+Zero-downtime deployment                 ✅ Verified working
+Instant rollback capability              ✅ Switch script
+Health checks                            ✅ Built into pipeline
+Automated CI/CD                          ✅ GitHub Actions
+Documentation                            ✅ This README
+
+
 📋 Section 15: License & Author
 ## 📄 License
 
@@ -436,3 +513,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Made with ❤️ using DevOps best practices
 
 </div>
+---

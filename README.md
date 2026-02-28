@@ -480,15 +480,14 @@ Implemented a **Blue-Green Deployment** strategy for zero-downtime, production-g
 
 ## Project 3 Requirements Checklist
 
-**Requirement**                               **Status**
-
-Two isolated environments                ✅ Blue & Green containers
-Traffic switching mechanism              ✅ Nginx configuration
-Zero-downtime deployment                 ✅ Verified working
-Instant rollback capability              ✅ Switch script
-Health checks                            ✅ Built into pipeline
-Automated CI/CD                          ✅ GitHub Actions
-Documentation                            ✅ This README
+ |Requirement                              |Status|
+ |Two isolated environments     |          ✅ Blue & Green containers|
+|Traffic switching mechanism   |           ✅ Nginx configuration|
+|Zero-downtime deployment       |          ✅ Verified working|
+|Instant rollback capability    |          ✅ Switch script|
+|Health checks                   |         ✅ Built into pipeline|
+|Automated CI/CD               |           ✅ GitHub Actions|
+|Documentation                    |        ✅ This README| 
 
 
 📋 Section 15: License & Author
@@ -513,4 +512,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Made with ❤️ using DevOps best practices
 
 </div>
----

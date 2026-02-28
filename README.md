@@ -481,6 +481,7 @@ Implemented a **Blue-Green Deployment** strategy for zero-downtime, production-g
 ## Project 3 Requirements Checklist
 
  |Requirement                              |Status|
+ |-------------|--------|-------------|
  |Two isolated environments     |          ✅ Blue & Green containers|
 |Traffic switching mechanism   |           ✅ Nginx configuration|
 |Zero-downtime deployment       |          ✅ Verified working|
